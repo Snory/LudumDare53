@@ -73,12 +73,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Sprite: {fileID: -594065827, guid: 158c7f938fe996b458379eb3df0f7b2c, type: 3}
+  m_Sprite: {fileID: -1083566357, guid: 75be7fa48cae5584c86f3b6186126142, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.47, y: 1.47}
+  m_Size: {x: 1.04, y: 1.04}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -94,8 +94,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2241518317349166091}
   - component: {fileID: 2241518317349166092}
+  - component: {fileID: 7175196712478369363}
   m_Layer: 0
-  m_Name: Twists
+  m_Name: KaboomTwist
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -116,7 +117,7 @@ Transform:
   - {fileID: 2241518317253040024}
   - {fileID: 2241518318510784064}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2241518317349166092
 MonoBehaviour:
@@ -130,11 +131,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b002bddb86fe794fa0a74aecfe7bb3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _twistAttackPower: 1
   _anticipationTimeMax: 5
   _anticipationSpriteRenderer: {fileID: 2241518317253040025}
   _kaboomScaleMax: 0.8
   _kaboomTimeMax: 2
   _kaboomGameObject: {fileID: 2241518318510784095}
+--- !u!114 &7175196712478369363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2241518317349166090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0512967ae9095114184bf02dbbd79004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 06890ec2c8c96734c8a3b415bd869ea2, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2241518317349166092}
+        m_TargetAssemblyTypeName: Twist, Assembly-CSharp
+        m_MethodName: OnTableReorganized
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2241518318510784095
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,12 +238,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: -1833519396, guid: 158c7f938fe996b458379eb3df0f7b2c, type: 3}
+  m_Sprite: {fileID: -1083566357, guid: 75be7fa48cae5584c86f3b6186126142, type: 3}
   m_Color: {r: 0.7830189, g: 0.5339635, b: 0.18221189, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.47, y: 1.47}
+  m_Size: {x: 1.04, y: 1.04}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

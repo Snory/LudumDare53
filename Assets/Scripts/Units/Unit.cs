@@ -20,6 +20,7 @@ public class Unit : MonoBehaviour
     [SerializeField]
     private bool _moving;
 
+    public UnityEvent<bool> Moved;
 
     [Header("Events")]
     [SerializeField]
@@ -30,8 +31,6 @@ public class Unit : MonoBehaviour
     private GeneralEvent _defendSeatRequest;
     [SerializeField]
     private GeneralEvent _showNearbySeatRequest;
-    [SerializeField]
-    private GeneralEvent _unitDied;
 
     [Header("Cooldown")]
     [SerializeField]
@@ -46,7 +45,10 @@ public class Unit : MonoBehaviour
     [Header("Health")]
 
     [SerializeField]
-    private TextMeshProUGUI _healthText;
+    private Image _healthImage;
+
+    [SerializeField]
+    private int _maxHealth;
 
     [SerializeField]
     private int _health;
@@ -55,19 +57,40 @@ public class Unit : MonoBehaviour
     public UnityEvent Died;
 
     [Header("Attack")]
+
     [SerializeField]
-    private int _attackPower;
+    private GameObject _spellPrefab;
+
     [SerializeField]
-    private int _attackRange;
+    private SpellData _basicSpell;
+    private Spell _currentSpell;
+
+    private Seat _attackedSeat;
+
 
     private void Awake()
     {
-        SetHealth();
+        SetHealth(_maxHealth);
+        SetSpell(_basicSpell);
+     
+    }
+
+    public void SetSpell(SpellData data)
+    {
+        GameObject weaponGO = Instantiate(_spellPrefab, this.transform.position, Quaternion.identity, this.transform);
+        if(_currentSpell != null)
+        {
+            Destroy(_currentSpell.gameObject);
+        }
+        _currentSpell = weaponGO.GetComponent<Spell>();
+        _currentSpell.Initialize(data);
+        _currentSpell.Used.AddListener(OnSpellUsed);
     }
 
     public void SetSeat(Seat s)
     {
         _seat = s;
+        MoveUnitToSeat();
     }
 
     public void MoveUnitToSeat()
@@ -77,27 +100,58 @@ public class Unit : MonoBehaviour
 
     private IEnumerator ChangePositionRoutine()
     {
-        _moving = true;
+        Moving(true);
         while (this.transform.position != _seat.transform.position)
         {
             transform.position = Vector3.Lerp(transform.position, _seat.transform.position, _movementPerSecond * Time.deltaTime);
             yield return null;
-            if(Vector2.Distance(this.transform.position, _seat.transform.position) < _movingDistanceTreshold)
+        }
+        Moving(false);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "Seat")
+        {
+            if(collision.GetComponent<Seat>() == _seat)
             {
-                _moving = false;
+                Moving(false);
             }
         }
-        _moving = false; //if it is on same position
     }
+
+    private void Moving(bool moving)
+    {
+        _moving = moving;
+        Moved?.Invoke(_moving);
+    }
+
+    public int GetAttackRange()
+    {
+        return _currentSpell.GetSpellRange();
+    }
+
 
     public Seat GetSeat()
     {
         return _seat;
     }
 
-    public void SetHealth()
+    public void SetHealth(int health)
     {
-        _healthText.text = _health.ToString();
+        _health = health;
+        _healthImage.fillAmount = _health / (float)_maxHealth;
+    }
+
+    public void AddHealth(int health)
+    {
+        int healthAfterHeal = _health + health;
+        SetHealth(Math.Min(_health,healthAfterHeal));
+    }
+
+    public int GetHealth()
+    {
+        return _health;
     }
 
     public bool CanPerformAction()
@@ -112,17 +166,18 @@ public class Unit : MonoBehaviour
 
     public void RaiseAttackSeatRequest(Seat attackedSeat)
     {
-        _attackSeatRequest.Raise(new AttackSeatRequestEventArgs(this, attackedSeat, _attackRange, _attackPower, RequestAttackCallback));
+        _attackedSeat = attackedSeat;
+        _attackSeatRequest.Raise(new AttackSeatRequestEventArgs(this, attackedSeat, GetAttackRange(), RequestAttackCallback));
     }
 
     public void RaiseDefendSeatRequest()
     {
-        _defendSeatRequest.Raise(new DefendSeatRequestEventArgs(this, _seat, _defendTime , RequestDefendCallback));
+        _defendSeatRequest.Raise(new DefendSeatRequestEventArgs(this, _seat, _defendTime, RequestDefendCallback));
     }
 
     public void RaiseMarkNearbySetRequest(bool show)
     {
-        _showNearbySeatRequest.Raise(new ShowNearbySeatsEventArgs(_seat, _attackRange, show));
+        _showNearbySeatRequest.Raise(new ShowNearbySeatsEventArgs(_seat, GetAttackRange(), show));
     }
 
     public void RequestDefendCallback(bool defended)
@@ -136,26 +191,17 @@ public class Unit : MonoBehaviour
     public void RequestAttackCallback(bool attacked)
     {
         if (attacked)
-        {         
-            CoolDown(true);
-        }
-    }
-
-    public void TakeDamage(int damage)
-    {
-        _health -= damage;
-        if(_health <= 0)
         {
-            Death();
+            CoolDown(true);
+            _currentSpell.UseSpell(_attackedSeat);
         }
-
-        SetHealth();
+        
+        _attackedSeat = null;
     }
 
-    public void Death()
+    private void OnSpellUsed()
     {
-        Died?.Invoke();
-        Destroy(this.gameObject,0.01f);
+        SetSpell(_basicSpell);
     }
 
     public void RequestSeatSwitchCallback(bool switched)
@@ -165,6 +211,25 @@ public class Unit : MonoBehaviour
             CoolDown(true);
         }
     }
+
+    public void TakeDamage(int damage)
+    {
+        _health -= damage;
+        if (_health <= 0)
+        {
+            Death();
+        }
+
+        SetHealth(_health);
+    }
+
+    public void Death()
+    {
+        StopAllCoroutines();
+        Died?.Invoke();
+        Destroy(this.gameObject);
+    }
+
 
     public void CoolDown(bool start)
     {
@@ -197,9 +262,4 @@ public class Unit : MonoBehaviour
             }
         }
     }
-
-
-
-
-
 }

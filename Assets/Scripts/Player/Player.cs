@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField]
-    private Table _table;
     private Unit _playerUnit;
 
     public enum PlayerAction { NONE, ATTACK, DEFEND, SWITCH, DEBUG }
@@ -82,7 +80,6 @@ public class Player : MonoBehaviour
             return;
         }
 
-
         if (!_playerUnit.CanPerformAction())
         {
             return;
@@ -98,7 +95,6 @@ public class Player : MonoBehaviour
             {
                 _playerUnit.RaiseSwitchSeatRequest(hit2d.collider.GetComponent<Seat>());
             }
-
         }
     }
 
@@ -142,13 +138,20 @@ public class Player : MonoBehaviour
         }
 
         _playerUnit.RaiseDefendSeatRequest();
-        _currentAction = PlayerAction.NONE;
+        _currentAction = PlayerAction.SWITCH;
     }
 
-    public void SetPlayerUnit(Unit unit)
+    public void SetUnit(Unit unit)
     {
         _playerUnit = unit;
+        _playerUnit.Moved.AddListener(OnUnitMoved);
     }
 
-
+    private void OnUnitMoved(bool moved)
+    {
+        if (!moved)
+        {
+            ShowNearbySeats(true);
+        }
+    }
 }

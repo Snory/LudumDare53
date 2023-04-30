@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class KaboomTwist : MonoBehaviour
+public class KaboomTwist : Twist
 {
 
+    [SerializeField]
+    public int _twistAttackPower;
 
     [SerializeField]
     private float _anticipationTimeMax;
@@ -26,6 +29,7 @@ public class KaboomTwist : MonoBehaviour
     [SerializeField]
     private GameObject _kaboomGameObject;
 
+
     private void Awake()
     {
         _anticipated = false;
@@ -38,7 +42,7 @@ public class KaboomTwist : MonoBehaviour
 
     [ContextMenu("RunShadow")]
     private void StartAnticipation()
-    {
+    {        
         StartCoroutine(AnticipationRoutine());
     }
 
@@ -60,6 +64,8 @@ public class KaboomTwist : MonoBehaviour
             {
                 _anticipated = true;
                 _anticipationSpriteRenderer.enabled = false;
+                _seat.TakeDamage(_twistAttackPower);
+                _seat.SetUnderAttack(false);
                 StartKaboomRoutine();
             }
         }
@@ -75,15 +81,11 @@ public class KaboomTwist : MonoBehaviour
     {
         float currentScale = 0;
         float scaleStep = (_kaboomScaleMax / _kaboomTimeMax);
-        Debug.Log("Scale step is: " + scaleStep);
-
 
         while (!_kaboombed)
         {
             currentScale += scaleStep * Time.deltaTime;
             _kaboomGameObject.transform.localScale = new Vector3(currentScale, currentScale, currentScale);
-            Debug.Log(currentScale);
-
             yield return null;
 
             _kaboomTimeCurrent += Time.deltaTime;
@@ -91,8 +93,7 @@ public class KaboomTwist : MonoBehaviour
             if (_kaboomTimeCurrent > _kaboomTimeMax)
             {
                 _kaboombed = true;
-                Destroy(this.gameObject);
-                
+                Destroy(this.gameObject);                
             }
         }
     }

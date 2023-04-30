@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 1479046300}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.92045, y: 0.92045, z: 0.92045}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1375930493691175473}
@@ -72,13 +72,13 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
-  m_Sprite: {fileID: 962091954, guid: 158c7f938fe996b458379eb3df0f7b2c, type: 3}
-  m_Color: {r: 0.7264151, g: 0.70357186, b: 0.70357186, a: 1}
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 139765235, guid: 75be7fa48cae5584c86f3b6186126142, type: 3}
+  m_Color: {r: 0.764151, g: 0.19223918, b: 0.19223918, a: 0.81960785}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.47, y: 1.47}
+  m_Size: {x: 3.21, y: 3.21}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -110,7 +110,7 @@ Transform:
   m_GameObject: {fileID: 1564524196}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0884, y: 1.0884, z: 1.0884}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1375930493691175473}
@@ -157,12 +157,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1
-  m_Sprite: {fileID: 962091954, guid: 158c7f938fe996b458379eb3df0f7b2c, type: 3}
-  m_Color: {r: 0.19698584, g: 0.644954, b: 0.754717, a: 1}
+  m_Sprite: {fileID: -150442913, guid: 75be7fa48cae5584c86f3b6186126142, type: 3}
+  m_Color: {r: 0.18986586, g: 0.744108, b: 0.754717, a: 0.45882353}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.47, y: 1.47}
+  m_Size: {x: 2.92, y: 2.95}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -179,9 +179,10 @@ GameObject:
   - component: {fileID: 1375930493691175473}
   - component: {fileID: 1375930493691175472}
   - component: {fileID: -5489891045440579816}
+  - component: {fileID: 5063422107595000115}
   m_Layer: 6
   m_Name: Seat
-  m_TagString: Untagged
+  m_TagString: Seat
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -194,8 +195,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1375930493691175475}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3.75, z: 0}
-  m_LocalScale: {x: 1.0598356, y: 1.0598356, z: 1.0598356}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.78787, y: 0.78787, z: 0.78787}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1479046301}
@@ -215,11 +216,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdebc0360fc969c4da0247abb6ec4d2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _movedInto: 0
+  _defended: 0
+  _underAttack: 0
   _defendSpriteRendered: {fileID: 1564524198}
   _attackSpriteRendered: {fileID: 1479046302}
   SeatEmpty:
     m_PersistentCalls:
       m_Calls: []
+  _seatTime: 0
 --- !u!58 &-5489891045440579816
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -230,9 +235,55 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.73499995
+--- !u!50 &5063422107595000115
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1375930493691175475}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7

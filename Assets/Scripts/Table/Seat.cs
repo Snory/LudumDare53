@@ -7,6 +7,16 @@ using UnityEngine.UI;
 
 public class Seat : MonoBehaviour
 {
+
+    [SerializeField]
+    private bool _movedInto;
+
+    [SerializeField]
+    private bool _defended;
+
+    [SerializeField]
+    private bool _underAttack;
+
     private Unit _unit;
 
     [SerializeField]
@@ -17,10 +27,55 @@ public class Seat : MonoBehaviour
 
     public UnityEvent<Seat> SeatEmpty;
 
+    [SerializeField]
+    private float _seatTime;
+
+    private void Update()
+    {
+        _seatTime += Time.deltaTime;
+    }
+
+    public float GetSeatTime()
+    {
+        return _seatTime;
+    }
+
     private void Awake()
     {
         _defendSpriteRendered.enabled = false;
         _attackSpriteRendered.enabled = false;
+    }
+
+    public void SetUnderAttack(bool underAttack)
+    {
+        _underAttack = underAttack;
+    }
+
+    public bool IsSeatUnderAttack()
+    {
+        return _underAttack;
+    }
+
+    public bool IsSeatMovedInto()
+    {
+        return _movedInto;
+    }
+
+    public bool IsSeatDefended()
+    {
+        return _defended;
+    }
+
+    public void TakeDamage(int powerAttack)
+    {
+        if (_defended)
+        {
+            SetDefend(false);
+        } else
+        {
+            _unit.TakeDamage(powerAttack);
+        }
+
     }
 
     public void SetUnit(Unit unit)
@@ -28,15 +83,32 @@ public class Seat : MonoBehaviour
         if(_unit != null)
         {
             _unit.Died.RemoveListener(OnUnitDeath);
+            _unit.Moved.RemoveListener(OnUnitMoved);
         }
         _unit = unit;
         _unit.Died.AddListener(OnUnitDeath);
+        _unit.Moved.AddListener(OnUnitMoved);
+    }
+
+    public void AttackSeat(SpellData spellData)
+    {
+        _unit.TakeDamage(spellData.Power);
+    }
+
+    public void GiveGift(GiftData giftData)
+    {
+        giftData.ApplyGift(_unit);
+    }
+
+    public void OnUnitMoved(bool moved)
+    {
+        _movedInto = moved;
     }
 
     public void SettleUnit()
     {
         _unit.SetSeat(this);
-        _unit.MoveUnitToSeat();
+        _seatTime = 0;
     }
 
     private void OnUnitDeath()
@@ -54,15 +126,22 @@ public class Seat : MonoBehaviour
         _attackSpriteRendered.enabled = highLight;
     }
 
-    public void HightLightDefend(bool highLight, float hightLightTime)
+    private void SetDefend(bool defend)
     {
-        _defendSpriteRendered.enabled = highLight;
-        StartCoroutine(HighlightDefendRoutine(hightLightTime));
+        _defendSpriteRendered.enabled = defend;
+        _defended = defend;
+    }
+
+    public void Defend(float defendTime)
+    {
+        SetDefend(true);
+        StartCoroutine(HighlightDefendRoutine(defendTime));
     }
 
     public IEnumerator HighlightDefendRoutine(float hightLightTime)
     {
         yield return new WaitForSeconds(hightLightTime);
         _defendSpriteRendered.enabled = false;
+        _defended = false;
     }
 }

@@ -6,7 +6,7 @@ using System;
 
 public abstract class State : ScriptableObject
 {
-    //possible transition for the state
+    //possible transition for the _enemyState
     public List<StateTransition> Transitions;
     public List<StateAction> StateActions;
 

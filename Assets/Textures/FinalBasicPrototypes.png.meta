@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-guid: 158c7f938fe996b458379eb3df0f7b2c
+guid: 75be7fa48cae5584c86f3b6186126142
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -20,11 +20,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -63,6 +64,8 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -101,7 +104,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: Android
+    buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -113,7 +116,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
-    buildTarget: WebGL
+    buildTarget: Windows Store Apps
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -128,85 +131,127 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Coldown
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 578
-        width: 170
-        height: 170
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8d37eada90575b34580ce803a6c8f2ab
-      internalID: 962091954
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Circle
-      rect:
-        serializedVersion: 2
-        x: 213
-        y: 591
-        width: 147
-        height: 147
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3df742583b167cf44bb4f469d566af11
-      internalID: -594065827
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HIghLight
-      rect:
-        serializedVersion: 2
-        x: 452
-        y: 581
-        width: 76
-        height: 180
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 76eff35d5524f5a42a6201a031bdc39e
-      internalID: 1272898103
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Table
       rect:
         serializedVersion: 2
-        x: 2
-        y: 1
-        width: 565
-        height: 565
+        x: 0
+        y: 117
+        width: 489
+        height: 489
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3c1f0d21dd7166b4f97f7ae5558fd5c6
-      internalID: -1833519396
+      spriteID: 2d214c6c50bfe9d4cb6cea5111836f00
+      internalID: 1118687938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tribe
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 383
+        width: 218
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bbed1afeb2cee764089f423aee7b327c
+      internalID: 1630013594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cooldown
+      rect:
+        serializedVersion: 2
+        x: 857
+        y: 347
+        width: 126
+        height: 254
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4897cffb15cfaf2409cd6aa1dfebd938
+      internalID: 1004412032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 406
+        width: 104
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 59e19ca50d49f774babeb44b54572514
+      internalID: -1083566357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Defend
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 40
+        width: 292
+        height: 295
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2ec53d17abd0e5449894b444a66b1ca8
+      internalID: -150442913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Attack
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 0
+        width: 321
+        height: 321
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a086c58e4ad6d24e8f7f7efe2bc6f20
+      internalID: 139765235
       vertices: []
       indices: 
       edges: []
@@ -222,13 +267,64 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      HIghLight: 1272898103
-      Coldown: 962091954
-      Circle: -594065827
-      Table: -1833519396
-  spritePackingTag: 
+      Attack: 139765235
+      Basic: -1083566357
+      Cooldown: 1004412032
+      Defend: -150442913
+      FinalBasicPrototypes_10: 1974332988
+      FinalBasicPrototypes_11: -68999064
+      FinalBasicPrototypes_12: -1144729479
+      FinalBasicPrototypes_13: -1390051812
+      FinalBasicPrototypes_14: -1278043963
+      FinalBasicPrototypes_15: 2032300358
+      FinalBasicPrototypes_16: -2119320713
+      FinalBasicPrototypes_17: -1675422295
+      FinalBasicPrototypes_18: 1849202905
+      FinalBasicPrototypes_19: 488332012
+      FinalBasicPrototypes_20: -796158949
+      FinalBasicPrototypes_21: -648199472
+      FinalBasicPrototypes_22: 172857467
+      FinalBasicPrototypes_23: -940020867
+      FinalBasicPrototypes_24: 1498670249
+      FinalBasicPrototypes_25: -1070111888
+      FinalBasicPrototypes_26: 646741902
+      FinalBasicPrototypes_27: -799301590
+      FinalBasicPrototypes_28: 1641388129
+      FinalBasicPrototypes_29: -1799786740
+      FinalBasicPrototypes_30: -1650766976
+      FinalBasicPrototypes_31: -705864147
+      FinalBasicPrototypes_32: 1931149876
+      FinalBasicPrototypes_33: -1577287004
+      FinalBasicPrototypes_34: -404485105
+      FinalBasicPrototypes_35: -1899033236
+      FinalBasicPrototypes_36: 708492147
+      FinalBasicPrototypes_37: 1036864426
+      FinalBasicPrototypes_38: -212613016
+      FinalBasicPrototypes_39: -1161909251
+      FinalBasicPrototypes_4: 799202224
+      FinalBasicPrototypes_40: -284204809
+      FinalBasicPrototypes_41: 498237888
+      FinalBasicPrototypes_42: -88571541
+      FinalBasicPrototypes_43: 1761933259
+      FinalBasicPrototypes_44: -815700041
+      FinalBasicPrototypes_45: 1305116530
+      FinalBasicPrototypes_46: 1077637767
+      FinalBasicPrototypes_47: 1152679169
+      FinalBasicPrototypes_48: -373654752
+      FinalBasicPrototypes_49: -1828831779
+      FinalBasicPrototypes_5: -2034817746
+      FinalBasicPrototypes_50: -2117164008
+      FinalBasicPrototypes_51: 137490540
+      FinalBasicPrototypes_52: -1923790378
+      FinalBasicPrototypes_53: 2012883073
+      FinalBasicPrototypes_6: -801895759
+      FinalBasicPrototypes_7: -780738667
+      FinalBasicPrototypes_8: -499560532
+      FinalBasicPrototypes_9: 1651120639
+      Table: 1118687938
+      Tribe: 1630013594
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

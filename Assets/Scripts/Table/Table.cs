@@ -5,11 +5,23 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+
 public class Table : MonoBehaviour
 {
+    [SerializeField]
+    private GeneralEvent Reorganized;
+
+    [SerializeField]
+    private float _minRandomEventTime;
+
+    [SerializeField]
+    private float _maxRandomEventTime;
 
     [SerializeField]
     private bool _instantiate;
+
+    [SerializeField]
+    private GameObject _sponsorPrefab;
 
     [SerializeField]
     private GameObject _unitPrefab;
@@ -19,6 +31,9 @@ public class Table : MonoBehaviour
 
     [SerializeField]
     private GameObject _twistPrefab;
+
+    [SerializeField]
+    private GameObject _enemyPrefab;
 
     [SerializeField]
     private Player _player;
@@ -34,13 +49,20 @@ public class Table : MonoBehaviour
 
     [SerializeField]
     private List<Seat> _seats;
-        
+
     private void Awake()
     {
         if (_instantiate)
         {
             PrepareTable();
         }
+
+        StartCoroutine(StartGenerateRandomEventsRoutine());
+    }
+
+    public List<Seat> GetSeats()
+    {
+        return _seats;
     }
 
     [ContextMenu("Prepare table")]
@@ -62,17 +84,30 @@ public class Table : MonoBehaviour
 
             //prepare RequestingUnit
             GameObject unitGO = Instantiate(_unitPrefab);
-            unitGO.name = "RequestingUnit" + i.ToString();
+            unitGO.name = "Unit" + i.ToString();
             Unit unit = unitGO.GetComponent<Unit>();
             unit.GetComponent<SpriteRenderer>().color = _colors[i];
 
+            //prepare Sponsors
+            GameObject sponsorGO = Instantiate(_sponsorPrefab, this.transform.position, Quaternion.identity, this.transform);
+            Sponsor sponsor = sponsorGO.GetComponent<Sponsor>();
+
             if (i == 0)
             {
-                _player.SetPlayerUnit(unit);
+                _player.SetUnit(unit);
+            }
+            else
+            {
+                GameObject enemyObject = Instantiate(_enemyPrefab);
+                Enemy enemy = enemyObject.GetComponent<Enemy>();
+                enemy.Inicialize(this, unit);
             }
 
             //settle the RequestingUnit into the SeatRequestor
             seat.SetUnit(unit);
+
+            //set Sponsor for unit
+            sponsor.SetUnit(unit); //will start sponsoring
 
             angle += angleStep;
         }
@@ -83,6 +118,10 @@ public class Table : MonoBehaviour
     [ContextMenu("Reorganize seats")]
     public void OrganizeSeats()
     {
+        if(_seats.Count == 0)
+        {
+            return;
+        }
 
         float angleStep = 360 / _seats.Count;
         float angle = 0;
@@ -99,33 +138,58 @@ public class Table : MonoBehaviour
 
             angle += angleStep;
         }
+
+        Reorganized.Raise();
+    }
+
+    public IEnumerator StartGenerateRandomEventsRoutine()
+    {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(_minRandomEventTime, _maxRandomEventTime));
+        GenerateRandomEvents();
+        StartCoroutine(StartGenerateRandomEventsRoutine());
     }
 
     [ContextMenu("Generate random events")]
     public void GenerateRandomEvents()
     {
-        int numberOfEvents = UnityEngine.Random.Range(0,_seats.Count/2);
+        int numberOfEvents = UnityEngine.Random.Range(0, _seats.Count / 2);
 
         int[] usedSeats = new int[numberOfEvents];
-        
 
-        for(int i = 0; i < numberOfEvents; i++)
+        int searchCount = 0;
+        int maxSearchCOunt = _seats.Count;
+
+        for (int i = 0; i < numberOfEvents; i++)
         {
             int randomSeat = UnityEngine.Random.Range(0, _seats.Count);
-            while(usedSeats.Contains(randomSeat))
+            bool defended = _seats[randomSeat].IsSeatDefended();
+
+            while (usedSeats.Contains(randomSeat) || defended)
             {
                 randomSeat = UnityEngine.Random.Range(0, _seats.Count);
+                defended = _seats[randomSeat].IsSeatDefended();
+                searchCount++;
+
+                if (searchCount > maxSearchCOunt)
+                {
+                    break;
+                }
             }
-            
+
+            searchCount = 0;
+
             usedSeats[i] = randomSeat;
-            Instantiate(_twistPrefab, _seats[randomSeat].transform.position, Quaternion.identity);
+
+            GameObject twist = Instantiate(_twistPrefab, _seats[randomSeat].transform.position, Quaternion.identity);
+            Twist t = twist.GetComponent<Twist>();
+            t.SetSeat(_seats[randomSeat]);
         }
     }
 
 
     public void OnShowNearbySeatsRequest(EventArgs args)
     {
-        foreach(var seat in _seats)
+        foreach (var seat in _seats)
         {
             seat.HightLightAttack(false);
         }
@@ -137,52 +201,100 @@ public class Table : MonoBehaviour
             return;
         }
 
-        foreach(var seat in GetNearbySeats(showNearbySeatsEventArgs.SeatRequestor, showNearbySeatsEventArgs.Range))
+        foreach (var seat in GetNearbySeats(showNearbySeatsEventArgs.SeatRequestor, showNearbySeatsEventArgs.Range))
         {
             seat.HightLightAttack(true);
         }
     }
 
-    private List<Seat> GetNearbySeats(Seat requestor, int range)
+    public int GetDistanceBetweenSeats(Seat fromSeat, Seat toSeat)
     {
-        List<Seat > seats = new List<Seat>();
+        int fromIndex = _seats.IndexOf(fromSeat);
+        int toIndex = _seats.IndexOf(toSeat);
 
-        int requestorIndex = _seats.IndexOf(requestor);
 
-        int currentIndex = requestorIndex;
+        int toRightDistance = 0;
+        int iterative = fromIndex;
+        //to the right
+        while (iterative != toIndex)
+        {
+            toRightDistance++;
+            iterative++;
+
+            if (iterative > _seats.Count)
+            {
+                iterative = 0;
+            }
+        }
+
+
+        int toLeftDistance = 0;
+        //to the left
+        while (iterative != toIndex)
+        {
+            toRightDistance++;
+            iterative--;
+
+            if (iterative < 0)
+            {
+                iterative = _seats.Count;
+            }
+        }
+
+        return Math.Min(toLeftDistance, toRightDistance);
+    }
+
+    public List<Seat> GetNearbySeats(Seat fromSeat, int range)
+    {
+        List<Seat> seats = new List<Seat>();
+
+        int fromSeatIndex = _seats.IndexOf(fromSeat);
+
+        int currentIndex = fromSeatIndex;
 
         //first positive
-        for(int i = 0; i < range; i++)
+        for (int i = 0; i < range; i++)
         {
             bool searching = true;
             while (searching)
             {
-                if(requestorIndex + 1 > _seats.Count - 1){
+                if (currentIndex + 1 >= _seats.Count)
+                {
                     currentIndex = 0;
-                } else
+                }
+                else
                 {
                     currentIndex++;
                 }
 
-                if (requestorIndex == currentIndex) //cant find any
+                if (currentIndex >= _seats.Count || currentIndex < 0)
+                {
+                    Debug.LogError("TOP - CurrentIndex: " + currentIndex.ToString() + " range: " + range.ToString());
+                }
+
+                if (fromSeatIndex == currentIndex) //cant find any
                 {
                     break;
-                }   else if (_seats[currentIndex].GetSeatedUnit() != null) //found
+                }
+                else if (_seats[currentIndex].GetSeatedUnit() != null) //found
                 {
-                    seats.Add(_seats[currentIndex]);
+                    if(fromSeat != _seats[currentIndex])
+                    {
+                        seats.Add(_seats[currentIndex]);
+                    }
                     break;
-                } 
-            }           
+                }
+            }
         }
 
-        currentIndex = requestorIndex;
+        currentIndex = fromSeatIndex;
         //and negative
         for (int i = range; i > 0; i--)
         {
             bool searching = true;
             while (searching)
             {
-                if (requestorIndex - 1 < 0)
+                if (currentIndex - 1 < 0)
                 {
                     currentIndex = _seats.Count - 1;
                 }
@@ -191,13 +303,21 @@ public class Table : MonoBehaviour
                     currentIndex--;
                 }
 
-                if (requestorIndex == currentIndex) //cant find any
+                if (currentIndex >= _seats.Count() || currentIndex < 0)
+                {
+                    Debug.LogError("BOTTOM - CurrentIndex: " + currentIndex.ToString() + " range: " + range.ToString());
+                }
+
+                if (fromSeatIndex == currentIndex) //cant find any
                 {
                     break;
                 }
                 else if (_seats[currentIndex].GetSeatedUnit() != null) //found
                 {
-                    seats.Add(_seats[currentIndex]);
+                    if (fromSeat != _seats[currentIndex])
+                    {
+                        seats.Add(_seats[currentIndex]);
+                    }
                     break;
                 }
             }
@@ -206,6 +326,52 @@ public class Table : MonoBehaviour
         return seats;
 
     }
+
+    public List<Seat> GetSeatsWithLowestHealth()
+    {
+        //check for seat with lowest HP
+        int lowestHealth = int.MaxValue;
+
+        for (int i = 1; i < _seats.Count; i++)
+        {
+            Seat inspectedSeat = _seats[i];
+            if (lowestHealth > inspectedSeat.GetSeatedUnit().GetHealth())
+            {
+                lowestHealth = inspectedSeat.GetSeatedUnit().GetHealth();
+            }
+        }
+
+        List<Seat> listOfSeatsWithLowestHealth = _seats.Where(s => s.GetSeatedUnit().GetHealth() == lowestHealth).ToList();
+
+        return listOfSeatsWithLowestHealth;
+    }
+
+    public List<Seat> GetSeatsWithHighestHealth()
+    {
+        //check for seat with lowest HP
+        int highestHealth = 0;
+
+        for (int i = 1; i < _seats.Count; i++)
+        {
+            Seat inspectedSeat = _seats[i];
+            if (highestHealth < inspectedSeat.GetSeatedUnit().GetHealth())
+            {
+                highestHealth = inspectedSeat.GetSeatedUnit().GetHealth();
+            }
+        }
+
+        List<Seat> listOfSeatsWithHighestHealth = _seats.Where(s => s.GetSeatedUnit().GetHealth() == highestHealth).ToList();
+
+        return listOfSeatsWithHighestHealth;
+    }
+
+    public List<Seat> GetSeatsUnderAttack()
+    {
+        List<Seat> listOfSeatsWithLowestHealth = _seats.Where(s => s.IsSeatUnderAttack()).ToList();
+
+        return listOfSeatsWithLowestHealth;
+    }
+
 
     public void OnSeatEmpty(Seat s)
     {
@@ -216,9 +382,15 @@ public class Table : MonoBehaviour
     public void OnSwitchSeatRequest(EventArgs args)
     {
         SwitchSeatRequestEventArgs seatSwitchRequestEventArgs = args as SwitchSeatRequestEventArgs;
-        Seat requestorSeat = _seats.Where(s => s.GetSeatedUnit()  == seatSwitchRequestEventArgs.RequestingUnit).FirstOrDefault();        
-        SwapPositionAtTable(requestorSeat, seatSwitchRequestEventArgs.RequestedSeat);
-        seatSwitchRequestEventArgs.SeatSwitchedCallback(true);
+        Seat requestorSeat = _seats.Where(s => s.GetSeatedUnit() == seatSwitchRequestEventArgs.RequestingUnit).FirstOrDefault();
+        bool canSwitch = !seatSwitchRequestEventArgs.RequestedSeat.IsSeatMovedInto();
+
+        if (canSwitch)
+        {
+            SwapPositionAtTable(requestorSeat, seatSwitchRequestEventArgs.RequestedSeat);
+        }
+
+        seatSwitchRequestEventArgs.SeatSwitchedCallback(canSwitch);
     }
 
     public void OnAttackSeatRequest(EventArgs args)
@@ -227,20 +399,15 @@ public class Table : MonoBehaviour
         Seat requestorSeat = _seats.Where(s => s.GetSeatedUnit() == attackRequestEventArgs.RequestingUnit).FirstOrDefault();
 
         List<Seat> seatsNearBy = GetNearbySeats(requestorSeat, attackRequestEventArgs.AttackRange);
-        bool attackSuccesfull = seatsNearBy.Contains(attackRequestEventArgs.AttackedSeat);
+        bool attackSuccesfull = seatsNearBy.Where(s => !s.IsSeatDefended()).Contains(attackRequestEventArgs.AttackedSeat);
 
-        if (attackSuccesfull)
-        {
-            attackRequestEventArgs.AttackedSeat.GetSeatedUnit().TakeDamage(attackRequestEventArgs.AttackPower);
-        }
-
-        attackRequestEventArgs.RequestAttackCallback(attackSuccesfull);    
+        attackRequestEventArgs.RequestAttackCallback(attackSuccesfull);
     }
 
     public void OnDefendSeatRequest(EventArgs args)
     {
         DefendSeatRequestEventArgs defendSeatRequestEventArgs = args as DefendSeatRequestEventArgs;
-        defendSeatRequestEventArgs.RequestedSeat.HightLightDefend(true, defendSeatRequestEventArgs.DefendTime);
+        defendSeatRequestEventArgs.RequestedSeat.Defend(defendSeatRequestEventArgs.DefendTime);
         defendSeatRequestEventArgs.SeatDefendCallback(true);
     }
 
@@ -250,7 +417,7 @@ public class Table : MonoBehaviour
         Unit requestorUnit = requestor.GetSeatedUnit();
         Unit requestedUnit = requested.GetSeatedUnit();
 
-        if(requestorUnit != null)
+        if (requestorUnit != null)
         {
             requested.SetUnit(requestorUnit);
             requested.SettleUnit();
