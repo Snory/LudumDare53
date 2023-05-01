@@ -16,32 +16,40 @@ public class Enemy : MonoBehaviour
     private Table _table;
 
     [SerializeField]
-    private float _decisionCoolDownMin, _decisionCoolDownMax;
+    private float _decisionCoolDownMin, _decisionCoolDownMax, _attackCoolDownTime, _defendCoolDownTime, _switchCoolDownTime;
 
+    [SerializeField]
+    private float _targetLockTimeMax, _targetLockTimeCurrent;
 
-    private float _decisionCoolDownCurrentRandom;
-    private float _decisionCooldownCurrent;
+    private Seat _seatReadyToAttack, _nearbySafeSeatToAttackedSeat;
 
-    private Seat _seatReadyToAttack;
+    private bool _switchCooldown, _attackCooldown, _defendCooldown;
 
     public void Inicialize(Table table, Unit unit)
     {
         _enemyUnit = unit;
         _table = table;
         _enemyState = EnemyState.TEST;
-        _decisionCooldownCurrent = Random.Range(_decisionCoolDownMin, _decisionCoolDownMax);
+        CoolDownAll();
+    }
+
+    public void CoolDownAll()
+    {
+        AttackCooldown();
+        Defendooldown();
+        SwitchCooldown();
     }
 
 
     private void Update()
     {
-        if(GameManager.Instance != null)
+        if (GameManager.Instance != null)
         {
-            if(GameManager.Instance.GameState == GameState.PAUSED)
+            if (GameManager.Instance.GameState == GameState.PAUSED)
             {
                 return;
             }
-        }   
+        }
 
         TestState();
     }
@@ -50,7 +58,7 @@ public class Enemy : MonoBehaviour
     {
         UnitEventArgs unitEventArgs = args as UnitEventArgs;
 
-        if(unitEventArgs.Unit == _enemyUnit)
+        if (unitEventArgs.Unit == _enemyUnit)
         {
             Destroy(this.gameObject);
         }
@@ -63,13 +71,6 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        if (_decisionCooldownCurrent > 0)
-        {
-            _decisionCooldownCurrent -= Time.deltaTime;
-            return;
-        }
-
-
         if (_enemyUnit.CanPerformAction())
         {
             List<Seat> seats = _table.GetSeats();
@@ -79,19 +80,86 @@ public class Enemy : MonoBehaviour
                 return; //just in case
             }
 
-            bool delay = Behaviour(seats);
+            LockTarget(seats);
 
-            if (delay)
+            Behaviour2(seats);
+        }
+    }
+
+    private void Behaviour2(List<Seat> seats)
+    {
+
+        bool mySeatUnderAttack = _table.GetSeatsUnderAttack().Contains(_enemyUnit.GetSeat());
+
+        if (mySeatUnderAttack)
+        {
+            if (_seatReadyToAttack != null)
             {
-                _decisionCoolDownCurrentRandom = Random.Range(_decisionCoolDownMin, _decisionCoolDownMax);
-                _decisionCooldownCurrent = _decisionCoolDownCurrentRandom;
+                if (!_seatReadyToAttack.IsSeatDefended() && !_switchCooldown) //switchnuse s ohroženým místem
+                {
+                    _enemyUnit.RaiseSwitchSeatRequest(_seatReadyToAttack);
+                    SwitchCooldown();
+                    _seatReadyToAttack = null; // asi jsem daleko, tak si radši najdu novej cíl
+
+                }
+                else if (_enemyUnit.GetSeat() != _nearbySafeSeatToAttackedSeat && !_switchCooldown && _nearbySafeSeatToAttackedSeat != null) //jdu blíž k cíli, stejnak jsem tam chtìl
+                {
+                    _enemyUnit.RaiseSwitchSeatRequest(_nearbySafeSeatToAttackedSeat);
+                    SwitchCooldown();
+
+                }
+                else if (!_defendCooldown)
+                {
+                    _enemyUnit.RaiseDefendSeatRequest();
+                    Defendooldown();
+                }
+            }
+        }
+        else if (_nearbySafeSeatToAttackedSeat != null) //jsem v bezpeèí nebo jsem stejnak v prdeli, ale mám na koho útoèit, tak zkusim zaútoèit
+        {
+            if (_nearbySafeSeatToAttackedSeat == _enemyUnit.GetSeat())
+            {
+                if (_seatReadyToAttack != null && !_attackCooldown && _seatReadyToAttack != null)
+                {
+                    _enemyUnit.RaiseAttackSeatRequest(_seatReadyToAttack);
+                    AttackCooldown();
+                }
+            }
+            else if (!_switchCooldown)
+            {
+                _enemyUnit.RaiseSwitchSeatRequest(_nearbySafeSeatToAttackedSeat);
+                SwitchCooldown();
             }
         }
     }
 
 
-    private bool Behaviour(List<Seat> seats)
+    public void OnSeatRemoved(EventArgs args)
     {
+        SeatEventArgs seatEventArgs = args as SeatEventArgs;
+
+        if (_seatReadyToAttack != null)
+        {
+            if (seatEventArgs.Seat == _seatReadyToAttack)
+            {
+                _seatReadyToAttack = null;
+                _targetLockTimeCurrent = _targetLockTimeMax;
+            }
+        }
+    }
+
+    private void LockTarget(List<Seat> seats)
+    {
+
+        if (_seatReadyToAttack != null)
+        {
+            if (Time.timeSinceLevelLoad - _targetLockTimeCurrent > _targetLockTimeMax)
+            {
+                _targetLockTimeCurrent = Time.timeSinceLevelLoad;
+                _seatReadyToAttack = null;
+                _nearbySafeSeatToAttackedSeat = null;
+            }
+        }
 
         List<Seat> listToAttack = null;
         float randomValue = Random.Range(0, 10);
@@ -102,11 +170,15 @@ public class Enemy : MonoBehaviour
         }
         else if (randomValue > 8)
         {
-            listToAttack = _table.GetSeatsWithHighestHealth().Where(s => !s.IsSeatDefended()).ToList();
+            listToAttack = _table.GetSeatsWithHighestHealth().ToList();
+        }
+        else if (randomValue <= 8 && randomValue > 2)
+        {
+            listToAttack = _table.GetSeatsWithLowestHealth().ToList();
         }
         else
         {
-            listToAttack = _table.GetSeatsWithLowestHealth().Where(s => !s.IsSeatDefended()).ToList();
+            listToAttack = _table.GetSeatsWithHighestScore().ToList();
         }
 
         Seat seatToAttack = null;
@@ -116,7 +188,7 @@ public class Enemy : MonoBehaviour
         {
             seatToAttack = listToAttack[0];
             nearbySafeSeatToAttackedSeat =
-                    _table.GetNearbySeats(seatToAttack, _enemyUnit.GetAttackRange()).Where(s => !s.IsSeatMovedInto() && !s.IsSeatUnderAttack()).ToList()
+                    _table.GetNearbySeats(seatToAttack, _enemyUnit.GetAttackRange()).Where(s => !s.IsSeatMovedInto() && !s.IsSeatUnderAttack() && !s.IsSeatDefended()).ToList()
                           .OrderByDescending(s => _table.GetDistanceBetweenSeats(s, seatToAttack)).FirstOrDefault();
 
             if (_seatReadyToAttack == null)
@@ -129,9 +201,9 @@ public class Enemy : MonoBehaviour
 
                     //get lists of seats which are not under attack and can be moved into
                     //if enemy is in the Seat and is under attack, it is removed, therefore enemy will not attack if he is under attack
-                    List<Seat> nearbySeatsToLowestList = _table.GetNearbySeats(tempLowest, _enemyUnit.GetAttackRange()).Where(s => !s.IsSeatMovedInto() && !s.IsSeatUnderAttack()).ToList();
+                    List<Seat> nearbySeatsToLowestList = _table.GetNearbySeats(tempLowest, _enemyUnit.GetAttackRange()).Where(s => !s.IsSeatMovedInto() && !s.IsSeatUnderAttack() && !s.IsSeatDefended()).ToList();
 
-                    //Find nearby Seat which is most far away from the seatToAttack heal Unit
+                    //Find nearby Seat which is most far away from the seatToAttack 
                     if (nearbySeatsToLowestList.Count > 0)
                     {
                         tempNearby = nearbySeatsToLowestList.OrderByDescending(s => _table.GetDistanceBetweenSeats(s, tempLowest)).FirstOrDefault();
@@ -147,58 +219,45 @@ public class Enemy : MonoBehaviour
             }
         }
 
+
         _seatReadyToAttack = seatToAttack;
+        _nearbySafeSeatToAttackedSeat = nearbySafeSeatToAttackedSeat;
+    }
 
-        /*
-            If there is a danger from environment or there is a Unit nearby while I have the seatToAttack HP or I am waiting for package
-            THEN DEFEND MYSELF!!!
-        */
+    private void SwitchCooldown()
+    {
+        StartCoroutine(SwitchCooldownRoutine());
+    }
 
-        bool mySeatUnderAttack = _table.GetSeatsUnderAttack().Contains(_enemyUnit.GetSeat());
-        bool lowestHp = _table.GetSeatsWithLowestHealth().Contains(_enemyUnit.GetSeat());
+    private IEnumerator SwitchCooldownRoutine()
+    {
+        _switchCooldown = true;
+        yield return new WaitForSeconds(_switchCoolDownTime);
+        _switchCooldown = false;
+    }
 
-        if (mySeatUnderAttack)
-        {
-            if (seatToAttack != null)
-            {
-                if (!seatToAttack.IsSeatDefended())
-                {
-                    _enemyUnit.RaiseSwitchSeatRequest(seatToAttack);
-                    _seatReadyToAttack = null;
-                    return true;
-                }
-                else if (_enemyUnit.GetSeat() != nearbySafeSeatToAttackedSeat)
-                {
-                    _enemyUnit.RaiseSwitchSeatRequest(nearbySafeSeatToAttackedSeat);
-                    return true;
-                }
-                else
-                {
-                    _enemyUnit.RaiseDefendSeatRequest();
-                    return true;
-                }
-            }
-        }
+    private void AttackCooldown()
+    {
+        StartCoroutine(AttackCooldownRoutine());
+    }
 
-        if (nearbySafeSeatToAttackedSeat != null)
-        {
-            if (nearbySafeSeatToAttackedSeat == _enemyUnit.GetSeat())
-            {
-                _enemyUnit.RaiseAttackSeatRequest(seatToAttack);
-                _seatReadyToAttack = null;
-                return true;
-            }
-            else
-            {
-                _enemyUnit.RaiseSwitchSeatRequest(nearbySafeSeatToAttackedSeat);
-                return false;
-            }
-        } else
-        {
-            _seatReadyToAttack = null;
-        }
+    private IEnumerator AttackCooldownRoutine()
+    {
+        _attackCooldown = true;
+        yield return new WaitForSeconds(_attackCoolDownTime);
+        _attackCooldown = false;
+    }
 
-        return false;
 
+    private void Defendooldown()
+    {
+        StartCoroutine(DefendCooldownRoutine());
+    }
+
+    private IEnumerator DefendCooldownRoutine()
+    {
+        _defendCooldown = true;
+        yield return new WaitForSeconds(_defendCoolDownTime);
+        _defendCooldown = false;
     }
 }

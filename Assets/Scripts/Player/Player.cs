@@ -48,6 +48,11 @@ public class Player : MonoBehaviour
             return;
         }
 
+        if(_playerUnit == null)
+        {
+            return;
+        }
+
         ObservePlayerAction();
         SwitchSeats();
         Attack();
@@ -210,6 +215,16 @@ public class Player : MonoBehaviour
         if (!moved)
         {
             ShowNearbySeats(true);
+        }
+    }
+
+    public void OnUnitDied(EventArgs args)
+    {
+        UnitEventArgs unitEventArgs = args as UnitEventArgs;
+
+        if(unitEventArgs.Unit == _playerUnit)
+        {
+            _playerUnit = null;
         }
     }
 }

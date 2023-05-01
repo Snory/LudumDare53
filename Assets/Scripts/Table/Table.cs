@@ -178,12 +178,12 @@ public class Table : MonoBehaviour
         for (int i = 0; i < numberOfEvents; i++)
         {
             int randomSeat = UnityEngine.Random.Range(0, _seats.Count);
-            bool defended = _seats[randomSeat].IsSeatDefended();
+            bool unusable = _seats[randomSeat].IsSeatDefended() || _seats[randomSeat].IsSeatUnderAttack();
 
-            while (usedSeats.Contains(randomSeat) || defended)
+            while (usedSeats.Contains(randomSeat) || unusable)
             {
                 randomSeat = UnityEngine.Random.Range(0, _seats.Count);
-                defended = _seats[randomSeat].IsSeatDefended();
+                unusable = _seats[randomSeat].IsSeatDefended() || _seats[randomSeat].IsSeatUnderAttack();
                 searchCount++;
 
                 if (searchCount > maxSearchCOunt)
@@ -360,6 +360,25 @@ public class Table : MonoBehaviour
         List<Seat> listOfSeatsWithLowestHealth = _seats.Where(s => s.GetSeatedUnit().GetHealth() == lowestHealth).ToList();
 
         return listOfSeatsWithLowestHealth;
+    }
+
+    public List<Seat> GetSeatsWithHighestScore()
+    {
+        //check for Seat with lowest HP
+        int highestCore = 0;
+
+        for (int i = 1; i < _seats.Count; i++)
+        {
+            Seat inspectedSeat = _seats[i];
+            if (highestCore < inspectedSeat.GetSeatedUnit().GetScore())
+            {
+                highestCore = inspectedSeat.GetSeatedUnit().GetScore();
+            }
+        }
+
+        List<Seat> listOfSeatsWithHighestHealth = _seats.Where(s => s.GetSeatedUnit().GetScore() == highestCore).ToList();
+
+        return listOfSeatsWithHighestHealth;
     }
 
     public List<Seat> GetSeatsWithHighestHealth()

@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6dbb4ae60016774c877eb66aa0deb2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementPerSecond: 2
+  _movementPerSecond: 4
   _movingDistanceTreshold: 0.1
 --- !u!58 &-132654632548848954
 CircleCollider2D:

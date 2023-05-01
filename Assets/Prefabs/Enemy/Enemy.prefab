@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4641782234481461366}
   - component: {fileID: 5736309708867969916}
   - component: {fileID: 5096720377237014593}
+  - component: {fileID: -9139871603931016783}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -47,6 +48,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _decisionCoolDownMin: 3
   _decisionCoolDownMax: 15
+  _attackCoolDownTime: 5
+  _defendCoolDownTime: 5
+  _switchCoolDownTime: 8
+  _targetLockTimeMax: 10
+  _targetLockTimeCurrent: 0
 --- !u!114 &5096720377237014593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,6 +72,34 @@ MonoBehaviour:
       - m_Target: {fileID: 5736309708867969916}
         m_TargetAssemblyTypeName: Enemy, Assembly-CSharp
         m_MethodName: OnUnitDied
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &-9139871603931016783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993578461792762103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0512967ae9095114184bf02dbbd79004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 05a01d63e0b66f440aa5a044515eb28e, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5736309708867969916}
+        m_TargetAssemblyTypeName: Enemy, Assembly-CSharp
+        m_MethodName: OnSeatRemoved
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
