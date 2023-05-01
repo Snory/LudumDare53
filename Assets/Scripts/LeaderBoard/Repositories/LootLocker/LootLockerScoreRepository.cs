@@ -8,6 +8,7 @@ public class LootLockerScoreRepository : RepositoryBase
 {
     int _leaderBoardId = 3195; //year, you can open the code and submit score, but why would you :)
     string _memberId;
+    string _name;
 
     public override void Add(ScoreEventData item)
     {
@@ -41,7 +42,7 @@ public class LootLockerScoreRepository : RepositoryBase
     {
         if (!PlayerPrefs.HasKey("PlayerName"))
         {
-            return;
+            PlayerPrefs.SetString("PlayerName", "Namor");
         }
 
         LootLockerSDKManager.GetPlayerName((response) =>
@@ -125,5 +126,13 @@ public class LootLockerScoreRepository : RepositoryBase
         });
     }
 
-
+    public override void SetName(string name)
+    {
+        PlayerPrefs.SetString("PlayerName", name);
+        
+        if(name.Length > 0)
+        {
+            SetName();
+        }
+    }
 }

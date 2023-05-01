@@ -144,13 +144,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0512967ae9095114184bf02dbbd79004, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: 8ef0be9d78603414cada883ee1778182, type: 2}
+  Event: {fileID: 11400000, guid: 05a01d63e0b66f440aa5a044515eb28e, type: 2}
   Response:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: -411116064503595568}
         m_TargetAssemblyTypeName: Gift, Assembly-CSharp
-        m_MethodName: OnUnitDied
+        m_MethodName: OnSeatRemoved
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

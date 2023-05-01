@@ -15,6 +15,11 @@ public class LeaderBoard : MonoBehaviour
         ScoreRepository.Load();
     }
 
+    public void SetName(string name)
+    {
+        ScoreRepository.SetName(name);
+    }
+
     private void Awake()
     {
         DontDestroyOnLoad(this);

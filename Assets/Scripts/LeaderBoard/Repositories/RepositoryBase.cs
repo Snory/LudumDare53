@@ -5,6 +5,7 @@ using UnityEngine;
 
 public abstract class RepositoryBase : MonoBehaviour
 {
+    public abstract void SetName(string name);
     public abstract void Add(ScoreEventData item);
     public abstract void FindAll(Action<List<ScoreEventData>> callback);
 

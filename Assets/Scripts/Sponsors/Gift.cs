@@ -52,13 +52,14 @@ public class Gift : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    public void OnUnitDied(EventArgs args)
+    public void OnSeatRemoved(EventArgs args)
     {
-        UnitEventArgs unitEventArgs = args as UnitEventArgs;
+        SeatEventArgs seatEventArgs = args as SeatEventArgs;
 
-        if (unitEventArgs.Unit == _unitWhichShouldBeSponsored)
+        if (seatEventArgs.Seat == _seat)
         {
             Destroy(this.gameObject);
         }
     }
+
 }

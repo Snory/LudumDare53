@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -17,12 +18,27 @@ public class Player : MonoBehaviour
 
     private bool _paused;
 
+    [SerializeField]
+    private Button _attack, _defend, _switch;
+
+    [SerializeField]
+    private Color _pressedColor;
+
+    private ColorBlock _attackColorBlock, _defendColorBlock, _switchColorBlock;
 
     private void Awake()
     {
-        _currentAction = PlayerAction.NONE;
+        _currentAction = PlayerAction.ATTACK;
         _camera = Camera.main;
         _paused = false;
+
+        _attack.onClick.AddListener(AttackAction);
+        _attackColorBlock = _attack.colors;
+        _defend.onClick.AddListener(DefendAction);
+        _defendColorBlock = _defend.colors;
+        _switch.onClick.AddListener(SwitchAction);
+        _switchColorBlock = _switch.colors;
+
     }
 
     private void Update()
@@ -43,22 +59,63 @@ public class Player : MonoBehaviour
         _paused = !_paused;
     }
 
+    public void AttackAction()
+    {
+        _currentAction = PlayerAction.ATTACK;
+        ShowNearbySeats(true);
+        ClearButtonColor();
+        _attackColorBlock.normalColor = _pressedColor;
+        SetButtonColor();
+
+    }
+
+    public void SwitchAction()
+    {
+        _currentAction = PlayerAction.SWITCH;
+        ClearButtonColor();
+        _switchColorBlock.normalColor = _pressedColor;
+        SetButtonColor();
+    }
+
+    public void DefendAction()
+    {
+        _currentAction = PlayerAction.DEFEND;
+        ClearButtonColor();
+        _defendColorBlock.normalColor = _pressedColor;
+        SetButtonColor();
+    }
+
+    private void ClearButtonColor()
+    {
+        _attackColorBlock.normalColor = Color.white;
+        _defendColorBlock.normalColor = Color.white;
+        _switchColorBlock.normalColor = Color.white;
+    }
+
+    private void SetButtonColor()
+    {
+        _attack.colors = _attackColorBlock;
+        _defend.colors = _defendColorBlock;
+        _switch.colors = _switchColorBlock;
+    }
+
+
+
+
 
     public void ObservePlayerAction()
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
-            _currentAction = PlayerAction.ATTACK;
-            ShowNearbySeats(true);
+            AttackAction();
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
-            _currentAction = PlayerAction.SWITCH;
-            ShowNearbySeats(false);
+            SwitchAction();
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            _currentAction = PlayerAction.DEFEND;
+            DefendAction();
         }
     }
 
@@ -134,7 +191,7 @@ public class Player : MonoBehaviour
         }
 
         _playerUnit.RaiseDefendSeatRequest();
-        _currentAction = PlayerAction.SWITCH;
+        SwitchAction();
     }
 
     public void SetUnit(Unit unit)
