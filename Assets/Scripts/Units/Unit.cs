@@ -12,10 +12,12 @@ public class Unit : MonoBehaviour
     private Seat _seat;
 
     [Header("Movement")]
+
     [SerializeField]
-    private float _movementPerSecond;
+    private float _firstMovementSpeedPerSecond;
+
     [SerializeField]
-    private float _movingDistanceTreshold;
+    private float _movementSpeedPerSecond;
 
     [SerializeField]
     private bool _moving;
@@ -54,7 +56,7 @@ public class Unit : MonoBehaviour
     private int _health;
     [SerializeField]
     private float _defendTime;
-    public UnityEvent Died;
+
 
     [Header("Attack")]
 
@@ -62,22 +64,47 @@ public class Unit : MonoBehaviour
     private GameObject _spellPrefab;
 
     [SerializeField]
+    private Transform _spellPositionTransform;
+
+    [SerializeField]
     private SpellData _basicSpell;
     private Spell _currentSpell;
 
     private Seat _attackedSeat;
 
+    private bool _firstMove;
+
+    [SerializeField]
+    private int _score;
+
+    [SerializeField]
+    private GeneralEvent _unitDied;
+
+    public void Stop()
+    {
+        StopAllCoroutines();
+        Destroy(this.gameObject);
+    }
+    public int GetScore()
+    {
+        return _score;
+    }
+
+    public void AddScore(int score)
+    {
+        _score += score;
+    }
 
     private void Awake()
     {
         SetHealth(_maxHealth);
         SetSpell(_basicSpell);
-     
+        _firstMove = true;
     }
 
     public void SetSpell(SpellData data)
     {
-        GameObject weaponGO = Instantiate(_spellPrefab, this.transform.position, Quaternion.identity, this.transform);
+        GameObject weaponGO = Instantiate(_spellPrefab, _spellPositionTransform.position, Quaternion.identity, this.transform);
         if(_currentSpell != null)
         {
             Destroy(_currentSpell.gameObject);
@@ -103,17 +130,18 @@ public class Unit : MonoBehaviour
         Moving(true);
         while (this.transform.position != _seat.transform.position)
         {
-            transform.position = Vector3.Lerp(transform.position, _seat.transform.position, _movementPerSecond * Time.deltaTime);
-            yield return null;
+            transform.position = Vector3.MoveTowards(transform.position, _seat.transform.position, _movementSpeedPerSecond * Time.deltaTime);
+    
+            yield return new WaitForSeconds(0);
         }
         Moving(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Seat")
+        if(collision.tag == "Break")
         {
-            if(collision.GetComponent<Seat>() == _seat)
+            if(collision.GetComponentInParent<Seat>() == _seat)
             {
                 Moving(false);
             }
@@ -122,6 +150,11 @@ public class Unit : MonoBehaviour
 
     private void Moving(bool moving)
     {
+        if(_firstMove == true && moving == false)
+        {
+            _firstMove = false;
+        }
+
         _moving = moving;
         Moved?.Invoke(_moving);
     }
@@ -146,7 +179,13 @@ public class Unit : MonoBehaviour
     public void AddHealth(int health)
     {
         int healthAfterHeal = _health + health;
-        SetHealth(Math.Min(_health,healthAfterHeal));
+
+        if(healthAfterHeal > 10)
+        {
+            healthAfterHeal = 10;
+        }
+
+        SetHealth(healthAfterHeal);
     }
 
     public int GetHealth()
@@ -193,7 +232,7 @@ public class Unit : MonoBehaviour
         if (attacked)
         {
             CoolDown(true);
-            _currentSpell.UseSpell(_attackedSeat);
+            _currentSpell.UseSpell(_attackedSeat, AddScore);
         }
         
         _attackedSeat = null;
@@ -226,8 +265,7 @@ public class Unit : MonoBehaviour
     public void Death()
     {
         StopAllCoroutines();
-        Died?.Invoke();
-        Destroy(this.gameObject);
+        _unitDied.Raise(new UnitEventArgs(this));
     }
 
 
@@ -251,7 +289,7 @@ public class Unit : MonoBehaviour
     {
         while (_coolingDown)
         {
-            yield return null;
+            yield return new WaitForSeconds(0); 
 
             _coolDownTime -= Time.deltaTime;
             _coolDownImage.fillAmount = _coolDownTime / _maxCoolDownTime;
@@ -261,5 +299,10 @@ public class Unit : MonoBehaviour
                 CoolDown(false);
             }
         }
+    }
+
+    internal void ResetCoolDown()
+    {
+        CoolDown(false);
     }
 }

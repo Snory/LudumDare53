@@ -19,19 +19,21 @@ public class SpellProjectile : MonoBehaviour
     [SerializeField]
     private float _movingDistanceTreshold;
 
-    public void Inicialize(Seat finalSeat, SpellData spellData)
+    private Action<int> _addScoreCallback;
+
+
+    public void Inicialize(Seat finalSeat, SpellData spellData, Action<int> addScore)
     {
         _seat = finalSeat;
         _spellData = spellData;
-        _seat.SeatEmpty.AddListener(OnEmptySeat);
+        _addScoreCallback = addScore;
         StartCoroutine(Move());
     }
 
 
     private void OnEmptySeat(Seat s)
     {
-        StopAllCoroutines();
-        Destroy(this.gameObject);
+        Stop();
     }
 
 
@@ -42,7 +44,7 @@ public class SpellProjectile : MonoBehaviour
             while (this.transform.position != _seat.transform.position)
             {
                 transform.position = Vector3.MoveTowards(transform.position, _seat.transform.position, _movementPerSecond * Time.deltaTime);
-                yield return null;
+                yield return new WaitForSeconds(0);
             }
         }
     }
@@ -58,10 +60,29 @@ public class SpellProjectile : MonoBehaviour
         }
     }
 
+    public void OnSeatRemoved(EventArgs args)
+    {
+        SeatEventArgs seatEventArgs = args as SeatEventArgs;
+
+        if (seatEventArgs.Seat == _seat)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
     private void AttackSeat()
     {
         _seat.TakeDamage(_spellData.Power);
+
+        _addScoreCallback.Invoke(10);
+
         Destroy(this.gameObject);
+    }
+
+    public void Stop()
+    {
+        StopAllCoroutines();
+        Destroy(this.gameObject );
     }
 
 }

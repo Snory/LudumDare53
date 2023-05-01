@@ -7,9 +7,9 @@ using UnityEngine;
 
 public abstract class GiftData : ScriptableObject
 {
-    public Sprite GiftSprite;
+    public abstract void ApplyGift(Unit recipient, bool correctRecipient);
 
-    public abstract void ApplyGift(Unit recipient);
+    public abstract Sprite GetUnwrapedGiftSprite();
 
 }
 

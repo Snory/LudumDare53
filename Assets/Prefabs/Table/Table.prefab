@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 1842802963218233623}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.535337, y: 0.535337, z: 0.535337}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5491072419710829684}
@@ -73,12 +73,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1217417122, guid: 20e567ed5bdc50941ad3a135415d00c1, type: 3}
+  m_Sprite: {fileID: 1118687938, guid: 75be7fa48cae5584c86f3b6186126142, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.65, y: 5.65}
+  m_Size: {x: 4.89, y: 4.89}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -157,12 +157,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1639773121, guid: 20e567ed5bdc50941ad3a135415d00c1, type: 3}
+  m_Sprite: {fileID: -803543684, guid: cf26f018a6c81cd4aa8283e571978042, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.65, y: 5.65}
+  m_Size: {x: 1.35, y: 1.72}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -182,6 +182,7 @@ GameObject:
   - component: {fileID: 163784529}
   - component: {fileID: 163784530}
   - component: {fileID: 163784531}
+  - component: {fileID: 8474578839049035258}
   m_Layer: 0
   m_Name: Table
   m_TagString: Untagged
@@ -218,8 +219,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e2557629dddaf4ea84c683ce65944a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minRandomEventTime: 5
-  _maxRandomEventTime: 15
+  Reorganized: {fileID: 11400000, guid: 06890ec2c8c96734c8a3b415bd869ea2, type: 2}
+  _minRandomEventTime: 0
+  _maxRandomEventTime: 5
   _instantiate: 1
   _sponsorPrefab: {fileID: 1427760706807316648, guid: 7c2ad0d6e12630b4da465074839243f0, type: 3}
   _unitPrefab: {fileID: 4257100220045095041, guid: 784cacfce9319ab4ab38e3236f9a8c81, type: 3}
@@ -230,15 +232,25 @@ MonoBehaviour:
   _playerCount: 8
   _distanceFromCenter: 3.8
   _colors:
-  - {r: 0.7264151, g: 0.18274589, b: 0.18274589, a: 1}
-  - {r: 0.745283, g: 0.6907508, b: 0.12421376, a: 1}
-  - {r: 0.7735849, g: 0.14352672, b: 0.61462045, a: 1}
-  - {r: 0.37507433, g: 0.18731451, b: 0.7735849, a: 1}
-  - {r: 0.19461249, g: 0.3499867, b: 0.7735849, a: 1}
-  - {r: 0.16743791, g: 0.7830189, b: 0.29350135, a: 1}
-  - {r: 0.17147256, g: 0.8018868, b: 0.78219163, a: 1}
-  - {r: 0.8396226, g: 0.5026226, b: 0.14785801, a: 1}
-  _seats: []
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.42745098, g: 0.8235294, b: 0.8901961, a: 1}
+  - {r: 0.5019608, g: 0.25882354, b: 0.48235294, a: 1}
+  - {r: 0.7921569, g: 0.08235294, b: 0.14117648, a: 1}
+  - {r: 0.48235294, g: 0.87058824, b: 0.5058824, a: 1}
+  - {r: 0.972549, g: 0.8666667, b: 0.3372549, a: 1}
+  - {r: 0.9254902, g: 0.6117647, b: 0.3882353, a: 1}
+  - {r: 0.5803922, g: 0.27058825, b: 0.047058824, a: 1}
+  _seats:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _gameOver: {fileID: 11400000, guid: b286b2c452ca4d94d9d8363bca3d357e, type: 2}
+  _addScoreToRepository: {fileID: 11400000, guid: 351e5b8a89ea57e48b6eda4758aa3cab, type: 2}
 --- !u!114 &163784528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,6 +354,34 @@ MonoBehaviour:
       - m_Target: {fileID: 5491072419710829687}
         m_TargetAssemblyTypeName: Table, Assembly-CSharp
         m_MethodName: OnDefendSeatRequest
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8474578839049035258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5491072419710829685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0512967ae9095114184bf02dbbd79004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 8ef0be9d78603414cada883ee1778182, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5491072419710829687}
+        m_TargetAssemblyTypeName: Table, Assembly-CSharp
+        m_MethodName: OnUnitDied
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -10,10 +10,10 @@ public struct ScoreData
     public int Score;
     public string Name;
 
-    public ScoreData(int score, string name)
+    public ScoreData(int score, string name = "")
     {
         Score = score;
-        Name = name;
+        Name = name == "" ? "Anonym" :name;
     }
 
 }

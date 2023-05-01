@@ -56,7 +56,7 @@ public class KaboomTwist : Twist
         {
             currentAlpha += alphaStep * Time.deltaTime;
             _anticipationSpriteRenderer.color = new Color(_anticipatedColor.r, _anticipatedColor.g, _anticipatedColor.b, currentAlpha);
-            yield return null;
+            yield return new WaitForSeconds(0);
 
             _anticipationTimeCurrent += Time.deltaTime;
 
@@ -86,7 +86,7 @@ public class KaboomTwist : Twist
         {
             currentScale += scaleStep * Time.deltaTime;
             _kaboomGameObject.transform.localScale = new Vector3(currentScale, currentScale, currentScale);
-            yield return null;
+            yield return new WaitForSeconds(0);
 
             _kaboomTimeCurrent += Time.deltaTime;
 

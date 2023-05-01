@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 914886642199137842}
   - component: {fileID: 1527380530419078993}
+  - component: {fileID: 6662761113073726966}
   m_Layer: 0
   m_Name: Sponsors
   m_TagString: Untagged
@@ -45,8 +46,41 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _giftsData:
-  - {fileID: 11400000, guid: a02e35272a96767448bd2c218a2776e4, type: 2}
+  - {fileID: 11400000, guid: ad4c6911cd48eaf4bac1dca4a278881c, type: 2}
   - {fileID: 11400000, guid: d639ffcfc7eaafe418f74e36c187e390, type: 2}
+  - {fileID: 11400000, guid: ad4c6911cd48eaf4bac1dca4a278881c, type: 2}
   _sponsorSpeedMin: 5
   _sponsorSpeedMax: 20
   _giftPrefab: {fileID: 8477020987051289665, guid: 7bb7c50d54dcc7945a3abbd64658ec13, type: 3}
+  _sponsoredUnitColor: {r: 0, g: 0, b: 0, a: 0}
+  _queueInAdvanceCount: 5
+  _giftQueueItemUI: {fileID: 5663516610246020878, guid: ed148378179e48d43a8924afe3e0641d, type: 3}
+  _playerSponsor: 0
+--- !u!114 &6662761113073726966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1427760706807316648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0512967ae9095114184bf02dbbd79004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 8ef0be9d78603414cada883ee1778182, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1527380530419078993}
+        m_TargetAssemblyTypeName: Sponsor, Assembly-CSharp
+        m_MethodName: OnUnitDied
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

@@ -63,7 +63,6 @@ public abstract class SceneTransitionBase : MonoBehaviour
 
     public void SceneLoaded()
     {
-        _sceneLoaded.Raise();
-        
+        _sceneLoaded.Raise();        
     }
 }

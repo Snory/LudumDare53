@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,6 @@ using UnityEngine.UI;
 
 public class Seat : MonoBehaviour
 {
-
     [SerializeField]
     private bool _movedInto;
 
@@ -24,8 +24,6 @@ public class Seat : MonoBehaviour
 
     [SerializeField]
     private SpriteRenderer _attackSpriteRendered;
-
-    public UnityEvent<Seat> SeatEmpty;
 
     [SerializeField]
     private float _seatTime;
@@ -66,6 +64,11 @@ public class Seat : MonoBehaviour
         return _defended;
     }
 
+    public bool CanBeSwitched()
+    {
+        return !_movedInto && !_defended;
+    }
+
     public void TakeDamage(int powerAttack)
     {
         if (_defended)
@@ -75,18 +78,15 @@ public class Seat : MonoBehaviour
         {
             _unit.TakeDamage(powerAttack);
         }
-
     }
 
     public void SetUnit(Unit unit)
     {
         if(_unit != null)
         {
-            _unit.Died.RemoveListener(OnUnitDeath);
             _unit.Moved.RemoveListener(OnUnitMoved);
         }
         _unit = unit;
-        _unit.Died.AddListener(OnUnitDeath);
         _unit.Moved.AddListener(OnUnitMoved);
     }
 
@@ -95,9 +95,9 @@ public class Seat : MonoBehaviour
         _unit.TakeDamage(spellData.Power);
     }
 
-    public void GiveGift(GiftData giftData)
+    public void GiveGift(GiftData giftData, bool correctRecipient)
     {
-        giftData.ApplyGift(_unit);
+        giftData.ApplyGift(_unit, correctRecipient);
     }
 
     public void OnUnitMoved(bool moved)
@@ -111,11 +111,6 @@ public class Seat : MonoBehaviour
         _seatTime = 0;
     }
 
-    private void OnUnitDeath()
-    {
-        SeatEmpty?.Invoke(this);
-        Destroy(this.gameObject);
-    }
     public Unit GetSeatedUnit()
     {
         return _unit;

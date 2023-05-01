@@ -1,11 +1,12 @@
 using LootLocker.Requests;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LootLockerScoreRepository : RepositoryBase
 {
-    int _leaderBoardId = 3195;
+    int _leaderBoardId = 3195; //year, you can open the code and submit score, but why would you :)
     string _memberId;
 
     public override void Add(ScoreEventData item)
@@ -13,10 +14,11 @@ public class LootLockerScoreRepository : RepositoryBase
         StartCoroutine(AddScoreRoutine(item));    
     }
 
-
     private IEnumerator AddScoreRoutine(ScoreEventData item)
     {
         bool done = false;
+
+        Debug.Log("Adding score");
 
         LootLockerSDKManager.SubmitScore(_memberId, item.ScoreData.Score, _leaderBoardId, (response) =>
         {
@@ -24,6 +26,7 @@ public class LootLockerScoreRepository : RepositoryBase
             {
                 Debug.Log("Successfully uploaded score");
                 done = true;
+                item.SavedCallBack.Invoke();
             }
             else
             {
@@ -63,7 +66,7 @@ public class LootLockerScoreRepository : RepositoryBase
         });
     }
 
-    public override IEnumerable<ScoreEventData> FindAll()
+    public override void FindAll(Action<List<ScoreEventData>> callback)
     {
         List<ScoreEventData> data = new List<ScoreEventData>();
 
@@ -77,13 +80,16 @@ public class LootLockerScoreRepository : RepositoryBase
               {
                   foreach(var item in response.items)
                   {
+                      Debug.Log("Adding data: " + item.score);
                       data.Add(new ScoreEventData(new ScoreData(item.score, item.player.name)));
-                  }                  
+                  }   
+                  
+                  callback.Invoke(data);
               }
 
           });
 
-        return data;
+       
     }
 
     public override void Load()

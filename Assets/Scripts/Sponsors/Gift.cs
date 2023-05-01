@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class Gift : MonoBehaviour
 {
+    private Unit _unitWhichShouldBeSponsored;
+
     private GiftData _giftData;
 
     private Seat _seat;
@@ -16,22 +18,12 @@ public class Gift : MonoBehaviour
     [SerializeField]
     private float _movingDistanceTreshold;
 
-    [SerializeField]
-    private SpriteRenderer _giftSpriteRenderer;
-
-    public void Inicialize(Seat finalSeat, GiftData giftData)
+    public void Inicialize(Seat finalSeat, GiftData giftData, Unit sponsoredUnit)
     {
         _seat = finalSeat;
         _giftData = giftData;
-        _giftSpriteRenderer.sprite = _giftData.GiftSprite;
-        _seat.SeatEmpty.AddListener(OnEmptySeat);
+        _unitWhichShouldBeSponsored = sponsoredUnit;
         StartCoroutine(Move());
-    }
-
-    private void OnEmptySeat(Seat s)
-    {
-        StopAllCoroutines();
-        Destroy(this.gameObject);
     }
 
     private IEnumerator Move()
@@ -55,7 +47,18 @@ public class Gift : MonoBehaviour
 
     private void GiftGive()
     {
-        _seat.GiveGift(_giftData);
+        bool correctRecipient = _unitWhichShouldBeSponsored == _seat.GetSeatedUnit();  
+        _seat.GiveGift(_giftData, correctRecipient);
         Destroy(this.gameObject);
+    }
+
+    public void OnUnitDied(EventArgs args)
+    {
+        UnitEventArgs unitEventArgs = args as UnitEventArgs;
+
+        if (unitEventArgs.Unit == _unitWhichShouldBeSponsored)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

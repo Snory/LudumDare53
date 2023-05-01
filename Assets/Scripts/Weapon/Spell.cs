@@ -34,13 +34,13 @@ public class Spell : MonoBehaviour
 
     }
 
-    public void UseSpell(Seat attackedSeat)
+    public void UseSpell(Seat attackedSeat, Action<int> AddScoreCallback)
     {
         _usageCounter--;
 
-        GameObject spellProjectileGO = Instantiate(_spellProjectilePrefab, this.transform.position, Quaternion.identity);
+        GameObject spellProjectileGO = Instantiate(_spellProjectilePrefab, this.transform.position, Quaternion.identity, this.transform.root);
         SpellProjectile spellProjectile = spellProjectileGO.GetComponent<SpellProjectile>();
-        spellProjectile.Inicialize(attackedSeat, _spellData);
+        spellProjectile.Inicialize(attackedSeat, _spellData, AddScoreCallback);
 
         if(_usageCounter == 0)
         {

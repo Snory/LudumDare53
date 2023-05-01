@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4641782234481461366}
   - component: {fileID: 5736309708867969916}
+  - component: {fileID: 5096720377237014593}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -46,3 +47,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _decisionCoolDownMin: 3
   _decisionCoolDownMax: 15
+--- !u!114 &5096720377237014593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 993578461792762103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0512967ae9095114184bf02dbbd79004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 8ef0be9d78603414cada883ee1778182, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5736309708867969916}
+        m_TargetAssemblyTypeName: Enemy, Assembly-CSharp
+        m_MethodName: OnUnitDied
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

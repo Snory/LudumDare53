@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1f38a9e9966f2b4fab9bd927a0d4022, type: 3}
-  m_Name: MinorHealthGift
+  m_Script: {fileID: 11500000, guid: 25a6524635f9d2546a43e606b138d927, type: 3}
+  m_Name: CooldownGift
   m_EditorClassIdentifier: 
-  GiftSprite: {fileID: 0}
-  Health: 1
+  UnwrappedSprite: {fileID: -945953002, guid: a8539deba747f1244b0866119ff2f8d3, type: 3}

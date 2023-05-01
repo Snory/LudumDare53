@@ -232,6 +232,37 @@ MonoBehaviour:
   m_FillOrigin: 3
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &3838730324020392418
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3900911309950498996}
+  m_Layer: 0
+  m_Name: SpellPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3900911309950498996
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3838730324020392418}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4257100220045095040}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4257100220045095041
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,8 +295,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1299080440}
+  - {fileID: 3900911309950498996}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4257100220045095043
 SpriteRenderer:
@@ -331,8 +363,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94e518388117d1b4b9dcc882b6e50729, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementPerSecond: 2
-  _movingDistanceTreshold: 0.1
+  _firstMovementSpeedPerSecond: 3
+  _movementSpeedPerSecond: 5
   _moving: 0
   Moved:
     m_PersistentCalls:
@@ -352,7 +384,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   _spellPrefab: {fileID: 9171381678881886830, guid: d49972e5abc04fb418fae11aab8ab3d2, type: 3}
+  _spellPositionTransform: {fileID: 3900911309950498996}
   _basicSpell: {fileID: 11400000, guid: a73e2a93274c85f4da90fd426531ae72, type: 2}
+  _score: 0
+  _unitDied: {fileID: 11400000, guid: 8ef0be9d78603414cada883ee1778182, type: 2}
 --- !u!58 &-2632659398240893881
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -387,4 +422,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.19

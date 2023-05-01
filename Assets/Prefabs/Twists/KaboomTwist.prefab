@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 2241518317349166091}
   - component: {fileID: 2241518317349166092}
   - component: {fileID: 7175196712478369363}
+  - component: {fileID: -8916620393857759152}
   m_Layer: 0
   m_Name: KaboomTwist
   m_TagString: Untagged
@@ -157,6 +158,34 @@ MonoBehaviour:
         m_TargetAssemblyTypeName: Twist, Assembly-CSharp
         m_MethodName: OnTableReorganized
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &-8916620393857759152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2241518317349166090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0512967ae9095114184bf02dbbd79004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 05a01d63e0b66f440aa5a044515eb28e, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2241518317349166092}
+        m_TargetAssemblyTypeName: Twist, Assembly-CSharp
+        m_MethodName: OnSeatRemoved
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

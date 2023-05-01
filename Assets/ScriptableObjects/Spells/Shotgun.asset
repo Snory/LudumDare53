@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec903989289e86745bac8763fe024f35, type: 3}
   m_Name: Shotgun
   m_EditorClassIdentifier: 
-  WeaponSprite: {fileID: 0}
+  SpellSprite: {fileID: 1011101132, guid: a8539deba747f1244b0866119ff2f8d3, type: 3}
   UsageCounter: 2
   Power: 2
   Range: 1

@@ -11,6 +11,8 @@ public class GameManager : Singleton<GameManager>
     [SerializeField]
     private string _startScene;
 
+
+    [SerializeField]
     private GameState _currentGameState = GameState.MAINMENU;
 
     public GameState GameState { get => _currentGameState; }
@@ -82,6 +84,11 @@ public class GameManager : Singleton<GameManager>
     public void GameOver()
     {
         TransitToState(GameState.OVER);
+    }
+
+    public void GameplayStarted()
+    {
+        TransitToState(GameState.GAMEPLAY);
     }
 
     public void RestartGame()

@@ -50,6 +50,16 @@ public class Table : MonoBehaviour
     [SerializeField]
     private List<Seat> _seats;
 
+    [SerializeField]
+    private GeneralEvent _gameOver;
+
+
+    [SerializeField]
+    private GeneralEvent _addScoreToRepository;
+
+    [SerializeField]
+    private GeneralEvent _seatDestroyed;
+
     private void Awake()
     {
         if (_instantiate)
@@ -80,21 +90,27 @@ public class Table : MonoBehaviour
             seatGo.name = "Seat" + i.ToString();
             Seat seat = seatGo.GetComponent<Seat>();
             _seats.Add(seat);
-            seat.SeatEmpty.AddListener(OnSeatEmpty);
-
+    
             //prepare RequestingUnit
-            GameObject unitGO = Instantiate(_unitPrefab);
+            GameObject unitGO = Instantiate(_unitPrefab, this.transform.root);
             unitGO.name = "Unit" + i.ToString();
             Unit unit = unitGO.GetComponent<Unit>();
             unit.GetComponent<SpriteRenderer>().color = _colors[i];
 
             //prepare Sponsors
-            GameObject sponsorGO = Instantiate(_sponsorPrefab, this.transform.position, Quaternion.identity, this.transform);
+            GameObject sponsorGO = Instantiate(_sponsorPrefab, this.transform.position, Quaternion.identity, this.transform.root);
             Sponsor sponsor = sponsorGO.GetComponent<Sponsor>();
+
+            //settle the RequestingUnit into the SeatRequestor
+            seat.SetUnit(unit);
+
+            //set Sponsor for Unit
+            sponsor.SetUnit(unit);
 
             if (i == 0)
             {
                 _player.SetUnit(unit);
+                sponsor.SetPlayerSponsor();
             }
             else
             {
@@ -103,11 +119,8 @@ public class Table : MonoBehaviour
                 enemy.Inicialize(this, unit);
             }
 
-            //settle the RequestingUnit into the SeatRequestor
-            seat.SetUnit(unit);
+            sponsor.StartSponsoring();
 
-            //set Sponsor for unit
-            sponsor.SetUnit(unit); //will start sponsoring
 
             angle += angleStep;
         }
@@ -115,10 +128,11 @@ public class Table : MonoBehaviour
         OrganizeSeats();
     }
 
+
     [ContextMenu("Reorganize seats")]
     public void OrganizeSeats()
     {
-        if(_seats.Count == 0)
+        if (_seats.Count == 0)
         {
             return;
         }
@@ -141,6 +155,8 @@ public class Table : MonoBehaviour
 
         Reorganized.Raise();
     }
+
+
 
     public IEnumerator StartGenerateRandomEventsRoutine()
     {
@@ -278,7 +294,7 @@ public class Table : MonoBehaviour
                 }
                 else if (_seats[currentIndex].GetSeatedUnit() != null) //found
                 {
-                    if(fromSeat != _seats[currentIndex])
+                    if (fromSeat != _seats[currentIndex])
                     {
                         seats.Add(_seats[currentIndex]);
                     }
@@ -329,7 +345,7 @@ public class Table : MonoBehaviour
 
     public List<Seat> GetSeatsWithLowestHealth()
     {
-        //check for seat with lowest HP
+        //check for Seat with lowest HP
         int lowestHealth = int.MaxValue;
 
         for (int i = 1; i < _seats.Count; i++)
@@ -348,7 +364,7 @@ public class Table : MonoBehaviour
 
     public List<Seat> GetSeatsWithHighestHealth()
     {
-        //check for seat with lowest HP
+        //check for Seat with lowest HP
         int highestHealth = 0;
 
         for (int i = 1; i < _seats.Count; i++)
@@ -372,18 +388,67 @@ public class Table : MonoBehaviour
         return listOfSeatsWithLowestHealth;
     }
 
-
-    public void OnSeatEmpty(Seat s)
+    public void OnUnitDied(EventArgs args)
     {
-        _seats.Remove(s);
+        UnitEventArgs unitEventArgs = args as UnitEventArgs;
+
+        //remove Seat of the unit and destroy it
+        _seatDestroyed.Raise(new SeatEventArgs(unitEventArgs.Unit.GetSeat()));
+        Destroy(unitEventArgs.Unit.gameObject);
+        _seats.Remove(unitEventArgs.Unit.GetSeat());
+        Destroy(unitEventArgs.Unit.GetSeat().gameObject);
+
         OrganizeSeats();
+
+        //check for game over conditions
+        if (unitEventArgs.Unit == _player.GetUnit() || _seats.Count == 1)
+        {
+            Debug.Log("End");
+            StartCoroutine(WaitWhileMoving());
+        }
+    }
+
+    private IEnumerator WaitWhileMoving()
+    {
+        bool moving = true;
+        while (moving)
+        {
+            moving = false;
+            foreach (var seat in _seats)
+            {
+
+                moving = seat.IsSeatMovedInto();
+
+                if (moving)
+                {
+                    break;
+                }
+            }
+
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(1);
+
+        if(FindObjectOfType<LeaderBoard>() != null)
+        {
+            _addScoreToRepository.Raise(new ScoreEventData(new ScoreData(_player.GetUnit().GetScore()), OnScoreSaved));
+        } else
+        {
+            OnScoreSaved();
+        }
+    }
+
+    private void OnScoreSaved()
+    {
+        _gameOver.Raise(new GameOverEventArgs(_player.GetUnit().GetScore()));
     }
 
     public void OnSwitchSeatRequest(EventArgs args)
     {
         SwitchSeatRequestEventArgs seatSwitchRequestEventArgs = args as SwitchSeatRequestEventArgs;
         Seat requestorSeat = _seats.Where(s => s.GetSeatedUnit() == seatSwitchRequestEventArgs.RequestingUnit).FirstOrDefault();
-        bool canSwitch = !seatSwitchRequestEventArgs.RequestedSeat.IsSeatMovedInto();
+        bool canSwitch = seatSwitchRequestEventArgs.RequestedSeat.CanBeSwitched();
 
         if (canSwitch)
         {

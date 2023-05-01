@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
@@ -25,7 +27,6 @@ public class Enemy : MonoBehaviour
     public void Inicialize(Table table, Unit unit)
     {
         _enemyUnit = unit;
-        _enemyUnit.Died.AddListener(OnUnitDied);
         _table = table;
         _enemyState = EnemyState.TEST;
         _decisionCooldownCurrent = Random.Range(_decisionCoolDownMin, _decisionCoolDownMax);
@@ -34,12 +35,25 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
+        if(GameManager.Instance != null)
+        {
+            if(GameManager.Instance.GameState == GameState.PAUSED)
+            {
+                return;
+            }
+        }   
+
         TestState();
     }
 
-    public void OnUnitDied()
+    public void OnUnitDied(EventArgs args)
     {
-        Destroy(this.gameObject);
+        UnitEventArgs unitEventArgs = args as UnitEventArgs;
+
+        if(unitEventArgs.Unit == _enemyUnit)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
     public void TestState()
@@ -114,10 +128,10 @@ public class Enemy : MonoBehaviour
                     Seat tempNearby = null;
 
                     //get lists of seats which are not under attack and can be moved into
-                    //if enemy is in the seat and is under attack, it is removed, therefore enemy will not attack if he is under attack
+                    //if enemy is in the Seat and is under attack, it is removed, therefore enemy will not attack if he is under attack
                     List<Seat> nearbySeatsToLowestList = _table.GetNearbySeats(tempLowest, _enemyUnit.GetAttackRange()).Where(s => !s.IsSeatMovedInto() && !s.IsSeatUnderAttack()).ToList();
 
-                    //Find nearby seat which is most far away from the seatToAttack heal unit
+                    //Find nearby Seat which is most far away from the seatToAttack heal Unit
                     if (nearbySeatsToLowestList.Count > 0)
                     {
                         tempNearby = nearbySeatsToLowestList.OrderByDescending(s => _table.GetDistanceBetweenSeats(s, tempLowest)).FirstOrDefault();
@@ -136,7 +150,7 @@ public class Enemy : MonoBehaviour
         _seatReadyToAttack = seatToAttack;
 
         /*
-            If there is a danger from environment or there is a unit nearby while I have the seatToAttack HP or I am waiting for package
+            If there is a danger from environment or there is a Unit nearby while I have the seatToAttack HP or I am waiting for package
             THEN DEFEND MYSELF!!!
         */
 

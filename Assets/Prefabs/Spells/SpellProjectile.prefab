@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 1255331264296807854}
   - component: {fileID: 5800373754542039484}
   - component: {fileID: -132654632548848954}
+  - component: {fileID: 7204445713706631606}
   m_Layer: 0
   m_Name: SpellProjectile
   m_TagString: Untagged
@@ -116,7 +117,7 @@ Transform:
   m_Children:
   - {fileID: 4199624115806284629}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5800373754542039484
 MonoBehaviour:
@@ -167,3 +168,31 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.1
+--- !u!114 &7204445713706631606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3244697261679047022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0512967ae9095114184bf02dbbd79004, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 05a01d63e0b66f440aa5a044515eb28e, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5800373754542039484}
+        m_TargetAssemblyTypeName: SpellProjectile, Assembly-CSharp
+        m_MethodName: OnSeatRemoved
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2

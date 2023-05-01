@@ -15,37 +15,32 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GeneralEvent ShowNearbySeatsRequested;
 
+    private bool _paused;
+
+
     private void Awake()
     {
         _currentAction = PlayerAction.NONE;
         _camera = Camera.main;
+        _paused = false;
     }
 
     private void Update()
     {
+        if (_paused)
+        {
+            return;
+        }
+
         ObservePlayerAction();
         SwitchSeats();
         Attack();
         Defend();
+    }
 
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            Debug.Log("Player action type: " + _currentAction.ToString());
-            Debug.Log("Unit can perform action: " + _playerUnit.CanPerformAction().ToString());
-
-            _currentAction = PlayerAction.DEBUG;
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 mouseInWorldPosition = _camera.ScreenToWorldPoint(Input.mousePosition);
-
-                RaycastHit2D hit2d = Physics2D.Raycast(mouseInWorldPosition, _camera.transform.forward, Mathf.Infinity, _selectable);
-
-                if (hit2d)
-                {
-                    Debug.Log("Hitted: " + hit2d.collider.name);
-                }
-            }
-        }
+    public void OnPauseGame()
+    {
+        _paused = !_paused;
     }
 
 
@@ -98,6 +93,7 @@ public class Player : MonoBehaviour
         }
     }
 
+
     private void Attack()
     {
 
@@ -147,6 +143,11 @@ public class Player : MonoBehaviour
         _playerUnit.Moved.AddListener(OnUnitMoved);
     }
 
+    public Unit GetUnit()
+    {
+        return _playerUnit;
+    }
+
     private void OnUnitMoved(bool moved)
     {
         if (!moved)
@@ -155,3 +156,5 @@ public class Player : MonoBehaviour
         }
     }
 }
+
+
